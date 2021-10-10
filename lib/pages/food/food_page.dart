@@ -38,7 +38,8 @@ class _FoodPageState extends State<FoodPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _fetchFoods,
+        //ปุ่ม +
+        onPressed: _test,
         child: Icon(Icons.add),
       ),
       body: _selectedBottomNavIndex == 0
@@ -52,6 +53,41 @@ class _FoodPageState extends State<FoodPage> {
     );
   }
 
+  Future<void> _test() async {
+    var url = Uri.parse('https://cpsu-test-api.herokuapp.com/foods');
+    var response = await http
+        .get(url); //ทำงานแบบ asynchronous ไม่ได้หยุดรอ ไม่ได้ค้าง , เรียก api
+    if (response.statusCode == 200) {
+      // ดึงค่า response.body ออกมา
+      Map<String, dynamic> jsonBody =
+          json.decode(response.body); //แปลง String เป็นโครงสร้างข้อมูลของ Dart
+      String status = jsonBody['status'];
+      String? message = jsonBody['message'];
+      List<dynamic> data = jsonBody['data'];
+
+      print('STATUS : $status');
+      print('MESSAGE : $message');
+
+      var foodList = data.map((element) => FoodItem(
+        id: element["id"],
+        name: element["name"],
+        price: element["price"],
+        image: element["image"],)
+      ).toList();
+
+      /*data.forEach((element) {
+        FoodItem(
+          id: element["id"],
+          name: element["name"],
+          price: element["price"],
+          image: element["image"],
+        );
+      });
+       */
+    }
+  }
+
+/*
   _fetchFoods() async {
     try {
       var list = (await _fetch('foods')) as List<dynamic>;
@@ -63,6 +99,9 @@ class _FoodPageState extends State<FoodPage> {
     }
   }
 
+ */
+
+/*
   Future<dynamic> _fetch(String endPoint) async {
     var url = Uri.parse('https://cpsu-test-api.herokuapp.com/$endPoint');
     final response = await http.get(url);
@@ -91,4 +130,5 @@ class _FoodPageState extends State<FoodPage> {
       throw Exception('Server connection failed!');
     }
   }
+   */
 }
